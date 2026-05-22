@@ -1,0 +1,111 @@
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    {% bootstrap_css %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #212529;
+        }
+        .detail-container {
+            max-width: 800px;
+        }
+        .article-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .detail-img {
+            max-height: 480px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .article-body {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #333333;
+        }
+        .pdf-preview-box {
+            border: 1px solid #e3e6f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .btn-modern {
+            border-radius: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container detail-container mt-5 mb-5">
+
+    <!-- Clean Back Button -->
+    <a href="{% url 'home' %}" class="btn btn-light border btn-modern mb-4 d-inline-flex align-items-center bg-white px-3 py-2 text-secondary shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+        </svg>
+        Back to Stories
+    </a>
+
+    <div class="card article-card shadow-sm bg-white">
+
+        {% if post.image %}
+        <img src="{{ post.image.url }}" class="detail-img" alt="{{ post.title }}">
+        {% endif %}
+
+        <div class="card-body p-4 p-md-5">
+
+            <h1 class="display-6 fw-bold text-dark mb-3 lh-sm">{{ post.title }}</h1>
+            
+            <div class="d-flex align-items-center text-muted small mb-4 pb-2 border-bottom">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-calendar3 me-2" viewBox="0 0 16 16">
+                    <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/>
+                    <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-6 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-6 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                </svg>
+                Published on {{ post.timestamp|date:"F d, Y" }}
+            </div>
+
+            <!-- Content Body with updated typography sizing -->
+            <div class="article-body mb-5">
+                {{ post.content|linebreaks }}
+            </div>
+
+            <!-- ✅ MODERN PDF SECTION -->
+            {% if post.pdf %}
+            <div class="mt-5 pt-4 border-top">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
+                    <div>
+                        <h5 class="fw-bold text-dark mb-1">📄 Attached Resource Document</h5>
+                        <p class="text-muted small mb-0">You can view the full PDF below or download it directly.</p>
+                    </div>
+                    <a href="{{ post.pdf.url }}" class="btn btn-outline-primary btn-modern d-inline-flex align-items-center justify-content-center py-2 px-3 shadow-sm" download>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                        </svg>
+                        Download PDF
+                    </a>
+                </div>
+
+                <!-- Custom container context for preview frame -->
+                <div class="pdf-preview-box">
+                    <iframe src="{{ post.pdf.url }}" width="100%" height="550px" style="border: none;"></iframe>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% bootstrap_javascript %}
+</body>
+</html>
